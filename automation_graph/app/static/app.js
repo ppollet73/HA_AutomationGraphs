@@ -70,7 +70,22 @@ function initCy(elements,preset,onSettled){
     // caractere : impression de zoom in/out en boucle pendant la saisie.
     if (suppressSelectFit) return;
     var selA=cy.nodes(':selected');
-    if (selA.length>0){ var ce=selA.connectedEdges(); var nb=selA.union(ce).union(ce.connectedNodes()); cy.animate({fit:{eles:nb,padding:60}},{duration:300}); }
+    if (selA.length>0){
+      var ce=selA.connectedEdges(); var nb=selA.union(ce).union(ce.connectedNodes());
+      // HOTFIX 1.7.4 : cliquer sur une automation alors que plusieurs noeuds
+      // etaient encore selectionnes (ex. resultats d'une recherche) fait
+      // passer par plusieurs evenements select/unselect en rafale (la
+      // deselection du groupe precedent, puis la selection du noeud
+      // clique). Sans cy.stop() prealable, chaque evenement empilait sa
+      // propre animation de 300ms dans la file d'attente de cy.animate() -
+      // avec de nombreux noeuds deselectionnes, cela se traduisait par
+      // plusieurs secondes de zoom in/out enchaines. cy.stop(true,true)
+      // annule/termine immediatement toute animation en cours ou en
+      // attente avant de lancer la nouvelle, qui est donc toujours la
+      // seule visible.
+      cy.stop(true,true);
+      cy.animate({fit:{eles:nb,padding:60}},{duration:300});
+    }
   });
   cy.on("tap",function(evt){ if (evt.target===cy){ detailEl.style.display="none"; } });
   applyVisibility(); // AVANT le layout : ELK doit voir les elements deja filtres, pas le graphe brut
