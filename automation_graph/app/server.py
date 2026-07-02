@@ -67,7 +67,7 @@ HEADERS = {
 
 OPTIONS_PATH = "/data/options.json"
 DESC_CACHE_PATH = "/data/descriptions.json"
-ADDON_VERSION = "1.7.2"
+ADDON_VERSION = "1.7.3"
 
 
 def load_options():

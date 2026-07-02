@@ -21,6 +21,9 @@ var aiEnabled=false; // reflete l'option de configuration enable_ai_descriptions
 var DOMAIN_COLORS={light:"#f5b301",switch:"#0ea5e9",sensor:"#64748b",binary_sensor:"#94a3b8",climate:"#ef4444",cover:"#a16207",input_boolean:"#14b8a6",input_number:"#14b8a6",input_datetime:"#14b8a6",input_text:"#14b8a6",number:"#0d9488",media_player:"#db2777",person:"#7c3aed",device_tracker:"#7c3aed",sun:"#f59e0b",weather:"#3b82f6",fan:"#06b6d4",lock:"#b45309",vacuum:"#0891b2",timer:"#16a34a",counter:"#16a34a",button:"#6366f1",scene:"#d946ef",group:"#475569",zone:"#7c3aed",alarm_control_panel:"#dc2626"};
 function entColor(d){ return DOMAIN_COLORS[d]||"#6b7280"; }
 var cy=null;
+// HOTFIX 1.7.3 : voir cy.on("select unselect",...) dans initCy() et
+// runSearch() plus bas.
+var suppressSelectFit=false;
 
 var cyStyle=[
   { selector:'node[type="automation"]', style:{'shape':'round-rectangle','background-color':'#36b37e','label':'data(label)','color':'#10241c','font-size':'9px','text-wrap':'wrap','text-max-width':'120px','text-valign':'center','text-halign':'center','width':'label','height':'label','padding':'6px','border-width':1,'border-color':'#2a8c63','min-width':'30px'}},
@@ -59,6 +62,13 @@ function initCy(elements,preset,onSettled){
   cy.on("tap","node",function(evt){ showDetail(evt.target); });
   cy.on("select unselect","node",function(){
     applyVisibility();
+    // HOTFIX 1.7.3 : ne pas re-cadrer la vue quand la (de)selection vient de
+    // runSearch() (voir suppressSelectFit) - sinon, chaque frappe dans le
+    // champ de recherche (debounce 250ms) redeclenche ce fit/zoom, et des
+    // que les resultats touchent plusieurs noeuds eloignes les uns des
+    // autres dans le graphe, la boite englobante change fortement a chaque
+    // caractere : impression de zoom in/out en boucle pendant la saisie.
+    if (suppressSelectFit) return;
     var selA=cy.nodes(':selected');
     if (selA.length>0){ var ce=selA.connectedEdges(); var nb=selA.union(ce).union(ce.connectedNodes()); cy.animate({fit:{eles:nb,padding:60}},{duration:300}); }
   });
@@ -789,12 +799,24 @@ function runSearch(q){
   if (!cy) return; q=(q||"").trim().toLowerCase();
   cy.nodes().removeClass("match");
   var hint=document.getElementById("search-hint");
-  if (!q){ hint.textContent=""; cy.elements().unselect(); return; }
-  var m=cy.nodes().filter(function(n){ return (n.data("label")||"").toLowerCase().indexOf(q)>=0 || n.id().toLowerCase().indexOf(q)>=0 || (n.data("origId")||"").toLowerCase().indexOf(q)>=0; });
-  m.addClass("match"); hint.textContent=m.length+" resultat(s)";
-  if (m.length>0){
-    cy.elements().unselect();
-    m.select();
+  // HOTFIX 1.7.3 : la recherche (re)selectionne les noeuds correspondants a
+  // chaque frappe (debounce 250ms) ; sans cette garde, le handler
+  // cy.on("select unselect",...) de initCy() re-cadrait la vue a chaque
+  // fois, et des que les resultats touchaient plusieurs noeuds eloignes les
+  // uns des autres, cela donnait l'impression d'un zoom in/out en boucle
+  // pendant la saisie. La recherche ne doit que surligner les resultats
+  // (classe "match"), jamais deplacer la camera.
+  suppressSelectFit=true;
+  try{
+    if (!q){ hint.textContent=""; cy.elements().unselect(); return; }
+    var m=cy.nodes().filter(function(n){ return (n.data("label")||"").toLowerCase().indexOf(q)>=0 || n.id().toLowerCase().indexOf(q)>=0 || (n.data("origId")||"").toLowerCase().indexOf(q)>=0; });
+    m.addClass("match"); hint.textContent=m.length+" resultat(s)";
+    if (m.length>0){
+      cy.elements().unselect();
+      m.select();
+    }
+  } finally {
+    suppressSelectFit=false;
   }
 }
 

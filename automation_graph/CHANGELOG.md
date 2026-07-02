@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.7.3 - Correctif
+- **Zoom in/out repete pendant une recherche** : la recherche (re)selectionne
+  les noeuds correspondants a chaque frappe (debounce 250 ms). Cette
+  (de)selection declenchait le meme mecanisme que le clic manuel sur un
+  noeud (recadrage/zoom automatique sur la selection) ; des que les
+  resultats touchaient plusieurs noeuds eloignes les uns des autres dans le
+  graphe, la vue se recadrait fortement a chaque caractere saisi, donnant
+  une impression de zoom in/out en boucle.
+- **Correctif** : la recherche ne declenche plus ce recadrage automatique -
+  elle se contente de surligner les resultats (bordure rouge) et d'afficher
+  leur nombre, sans deplacer la camera. Le recadrage automatique reste
+  inchange pour un clic direct sur un noeud et pour le panneau Problemes.
+
 ## 1.7.2 - Correctif urgent
 - **Cause du blocage restant sur 1.7.1** (statut fige sur "Chargement des
   automations : 93/94", categories jamais affichees, alors que le graphe
