@@ -4,8 +4,8 @@ configuration:
     description: >-
       Duree de mise en cache des noms d'appareils et des categories
       d'automations, lus depuis le registre Home Assistant (WebSocket).
-      Augmente cette valeur si tu changes rarement tes appareils/categories,
-      diminue-la si tu veux voir tes changements plus vite.
+      Augmenter cette valeur si les appareils/categories changent rarement,
+      la diminuer pour voir les changements plus rapidement.
   config_cache_minutes:
     name: "Cache des configurations d'automation (minutes)"
     description: >-
@@ -22,15 +22,15 @@ configuration:
     description: >-
       Active la generation de descriptions en langage naturel des
       automations via le service natif Home Assistant ai_task.generate_data.
-      Desactive par defaut : aucune donnee ne quitte alors jamais ton reseau
-      pour cette fonctionnalite. PREREQUIS pour que ce soit utile : (1) une
-      entite ai_task.* doit deja exister dans Home Assistant (ex. integration
-      "OpenAI Conversation" avec la fonctionnalite AI Task activee, ou toute
-      autre integration compatible AI Task) ; (2) cette entite doit etre
-      fonctionnelle, avec un credit/quota suffisant chez son fournisseur. Si
-      ces conditions ne sont pas remplies, l'add-on retombe automatiquement
-      et silencieusement sur une description locale (regarde le journal de
-      l'add-on pour voir pourquoi).
+      Desactive par defaut : aucune donnee ne quitte alors jamais le reseau
+      local pour cette fonctionnalite. PREREQUIS pour que ce soit utile : (1)
+      une entite ai_task.* doit deja exister dans Home Assistant (ex.
+      integration "OpenAI Conversation" avec la fonctionnalite AI Task
+      activee, ou toute autre integration compatible AI Task) ; (2) cette
+      entite doit etre fonctionnelle, avec un credit/quota suffisant chez
+      son fournisseur. Si ces conditions ne sont pas remplies, l'add-on
+      retombe automatiquement et silencieusement sur une description locale
+      (consulter le journal de l'add-on pour en connaitre la raison).
   ai_task_entity_id:
     name: "Entite ai_task a utiliser"
     description: >-
