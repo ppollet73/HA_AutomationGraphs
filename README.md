@@ -41,5 +41,5 @@ faire apparaitre le lien dans la sidebar Home Assistant.
 
 ## Licence et support
 
-Add-on developpe et maintenu par Pierre Pollet. Pour signaler un probleme
+Add-on developpe et maintenu par Madoma73. Pour signaler un probleme
 ou proposer une amelioration, ouvrez une issue sur ce depot GitHub.
