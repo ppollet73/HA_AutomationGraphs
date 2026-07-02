@@ -1,6 +1,6 @@
 # Automations Graph
 
-Graphe interactif de toutes tes automations Home Assistant : declencheurs,
+Graphe interactif de toutes les automations Home Assistant : declencheurs,
 conditions, actions, appels de scripts et liens inter-automations. L'add-on
 lit les donnees **en direct** dans Home Assistant a chaque ouverture (API
 coeur via le Supervisor) — il n'y a rien a configurer ni aucun jeton a
@@ -9,22 +9,35 @@ JavaScript) : aucun acces Internet requis pour afficher l'interface.
 
 ## Installation
 
-1. Copie le dossier `automation_graph/` (celui qui contient `config.yaml`)
-   dans `/addons/` sur ton serveur Home Assistant, par exemple via le
-   partage Samba ou l'add-on **Studio Code Server** que tu as deja installe.
-   Le resultat doit etre `/addons/automation_graph/config.yaml`.
-2. Va dans **Parametres > Modules complementaires (Add-ons) > Boutique**,
-   clique sur les trois points en haut a droite puis **Actualiser**. La
+### Methode recommandee : depuis le depot GitHub
+
+Voir les instructions detaillees dans le README du depot
+(`https://github.com/ppollet73/HA_AutomationGraphs`), qui inclut un lien
+d'ajout en un clic. Une fois le depot ajoute, l'add-on apparait dans la
+Boutique Home Assistant et beneficie des mises a jour automatiques via le
+Supervisor.
+
+### Methode alternative : installation locale manuelle
+
+1. Copier le dossier `automation_graph/` (celui qui contient `config.yaml`)
+   dans `/addons/` sur le serveur Home Assistant, par exemple via le
+   partage Samba ou l'add-on **Studio Code Server**. Le resultat doit etre
+   `/addons/automation_graph/config.yaml`.
+2. Dans **Parametres > Modules complementaires (Add-ons) > Boutique**,
+   cliquer sur les trois points en haut a droite puis **Actualiser**. La
    section "Add-ons locaux" doit faire apparaitre "Automations Graph".
-3. Ouvre-le, clique sur **Installer** puis **Demarrer**.
+3. Ouvrir l'add-on, cliquer sur **Installer** puis **Demarrer**.
+
+Cette methode n'offre pas de mise a jour automatique : chaque nouvelle
+version doit etre recopiee manuellement.
 
 ## Afficher le lien dans la barre laterale
 
 C'est le comportement standard de Home Assistant pour tous les add-ons avec
-ingress (Node-RED, File editor, etc.) : une fois l'add-on demarre, ouvre son
-onglet **Informations** et active le bouton **"Afficher dans le panneau
+ingress (Node-RED, File editor, etc.) : une fois l'add-on demarre, ouvrir son
+onglet **Informations** et activer le bouton **"Afficher dans le panneau
 lateral"**. Un lien "Automations Graph" apparait alors dans la sidebar. Cette
-etape manuelle (une seule fois) est une protection Home Assistant, elle ne
+etape manuelle (une seule fois) est une protection Home Assistant ; elle ne
 peut pas etre automatisee depuis l'add-on lui-meme.
 
 ## Fonctionnement
@@ -49,9 +62,9 @@ peut pas etre automatisee depuis l'add-on lui-meme.
 - Le frontend (Cytoscape.js et ses plugins) est servi localement par l'add-on
   depuis `app/static/lib/` — aucun CDN, aucun acces Internet requis pour
   afficher l'interface. Il construit le graphe a partir des donnees recues et
-  l'affiche. Rien n'est stocke ni envoye en dehors de ton reseau Home
-  Assistant (sauf, si tu l'actives, la generation de description IA — voir
-  plus bas).
+  l'affiche. Rien n'est stocke ni envoye en dehors du reseau Home Assistant
+  concerne (sauf, si cette option est activee, la generation de description
+  IA — voir plus bas).
 - Bouton **Recalculer (live)** : relit tout (etat + configurations, sans
   passer par le cache) et recalcule la disposition. Sinon, la disposition
   precedente est reutilisee (mise en cache dans le navigateur) tant que la
@@ -76,10 +89,10 @@ peut pas etre automatisee depuis l'add-on lui-meme.
   plus longue lors d'un premier chargement ou d'un "Recalculer (live)"),
   affiche un compteur reel ("Chargement des automations : 42 / 94") avec une
   barre de progression qui se remplit au fur et a mesure. Cela evite de
-  croire l'add-on bloque lors d'un chargement qui peut prendre plusieurs
-  dizaines de secondes avec beaucoup d'automations. Le frontend interroge
-  pour cela `GET /api/progress` toutes les ~400ms, mais uniquement pendant
-  qu'un chargement est effectivement en cours (jamais en continu).
+  laisser croire l'add-on bloque lors d'un chargement qui peut prendre
+  plusieurs dizaines de secondes avec beaucoup d'automations. Le frontend
+  interroge pour cela `GET /api/progress` toutes les ~400ms, mais uniquement
+  pendant qu'un chargement est effectivement en cours (jamais en continu).
 - **Overlay "activite"** (sidebar, section Affichage) : desactive par
   defaut ; une fois active, colore chaque automation selon l'anciennete de
   son dernier declenchement (vert < 24h, vert clair 1-7j, jaune > 7j, rose
@@ -92,8 +105,8 @@ peut pas etre automatisee depuis l'add-on lui-meme.
 
 Quatrieme option du selecteur **Disposition** (a cote d'Organique,
 Hierarchique et Simple — ces trois-la restent strictement inchangees,
-aucune entite dedoublee, aucun changement visuel). Objectif honnete a lire
-avant de l'utiliser :
+aucune entite dedoublee, aucun changement visuel). Precisions utiles avant
+utilisation :
 
 - Cette disposition garantit **zero croisement** sur les parties
   arborescentes du graphe (la grande majorite : chaque automation avec ses
@@ -106,12 +119,12 @@ avant de l'utiliser :
   aucun algorithme ne peut les eviter tous. C'est pourquoi cette
   disposition **affiche les entites tres partagees (8 liens ou plus) en
   plusieurs exemplaires** — copies a bordure pointillee, memes
-  informations, chacune reliee a une seule automation. C'est ce
-  dedoublement qui permet d'approcher le zero croisement ; le libellé du
-  selecteur l'annonce explicitement ("dedouble les entites partagees").
-  Le panneau de detail d'une copie precise l'entite d'origine et le nombre
-  d'exemplaires affiches ; le panneau Problemes et la recherche traitent
-  toutes les copies d'une meme entite comme une seule (pas de doublon).
+  informations, chacune reliee a une seule automation. Ce dedoublement
+  permet d'approcher le zero croisement ; le libelle du selecteur l'annonce
+  explicitement ("dedouble les entites partagees"). Le panneau de detail
+  d'une copie precise l'entite d'origine et le nombre d'exemplaires
+  affiches ; le panneau Problemes et la recherche traitent toutes les
+  copies d'une meme entite comme une seule (pas de doublon).
 - Le **nombre de croisements restants** est affiche a la suite du texte
   habituel dans la barre de statut (ex. "... - 0 croisement"). Sur les
   trois autres dispositions (courbes bezier), ce meme compteur est affiche
@@ -121,13 +134,13 @@ avant de l'utiliser :
   visibles, le compteur affiche "non compte" plutot que de calculer.
 - Calcul base sur **elkjs** (bibliotheque vendoree comme les autres,
   chargee **uniquement** au premier passage sur cette disposition — tant
-  que tu restes sur Organique/Hierarchique/Simple, rien n'est charge ni
-  calcule) et execute dans un **Web Worker** pour que l'interface reste
-  reactive pendant le calcul, meme sur un grand graphe.
+  que l'utilisateur reste sur Organique/Hierarchique/Simple, rien n'est
+  charge ni calcule) et execute dans un **Web Worker** pour que l'interface
+  reste reactive pendant le calcul, meme sur un grand graphe.
 
 ## Categories
 
-Les categories affichees dans le panneau lateral sont celles que tu geres
+Les categories affichees dans le panneau lateral sont celles gerees
 nativement dans Home Assistant (**Parametres > Automatisations**, colonne/
 filtre "Categorie" ; selection multiple > "Deplacer vers une categorie").
 L'add-on les lit en direct via le registre (`config/category_registry/list`
@@ -159,7 +172,7 @@ uniquement lors d'un `refresh()`, jamais en continu :
   `last_triggered` est vide.
 
 Chaque ligne du panneau est cliquable : elle selectionne et zoome sur le ou
-les noeuds concernes (memes mecanisme que la recherche). Les noeuds en
+les noeuds concernes (meme mecanisme que la recherche). Les noeuds en
 "erreur" ou en cycle sont entoures en rouge sur le graphe ; les cas "a
 verifier" ne le sont pas (pour ne pas sur-signaler les faux positifs
 probables). Le panneau s'appuie sur `GET /api/entities`, un snapshot de
@@ -216,30 +229,32 @@ serveur.
 
 Le panneau de detail affiche toujours d'abord une description mecanique
 instantanee (construite a partir des declencheurs/conditions/actions),
-generee localement, sans aucun appel externe. Si tu actives l'option
-**"Descriptions IA"** (`enable_ai_descriptions`, desactivee par defaut) dans
-la Configuration de l'add-on, celui-ci demande en plus, en arriere-plan, une
+generee localement, sans aucun appel externe. Si l'option **"Descriptions
+IA"** (`enable_ai_descriptions`, desactivee par defaut) est activee dans la
+Configuration de l'add-on, celui-ci demande en plus, en arriere-plan, une
 reformulation en langage naturel via le service natif Home Assistant
 `ai_task.generate_data` — sans gerer de cle API lui-meme, il reutilise
-l'entite `ai_task.*` deja configuree dans ton HA.
+l'entite `ai_task.*` deja configuree dans l'installation Home Assistant
+concernee.
 
 ### Prerequis pour que les descriptions IA fonctionnent
 
 1. **Option activee** : `enable_ai_descriptions: true` dans la Configuration
    de l'add-on (Parametres > Modules complementaires > Automations Graph >
    Configuration). Reste `false` par defaut : tant que ce n'est pas active,
-   rien n'est jamais envoye hors de ton reseau pour cette fonctionnalite.
+   rien n'est jamais envoye hors du reseau local pour cette fonctionnalite.
 2. **Une entite `ai_task.*` fonctionnelle doit exister dans Home Assistant**
    (ex. l'integration "OpenAI Conversation" avec la fonctionnalite AI Task
-   activee, ou toute autre integration compatible AI Task). Sans ca, l'add-on
-   journalise un avertissement explicite et retombe en permanence sur la
-   description locale.
-3. **Cette entite doit avoir un credit/quota actif chez son fournisseur.**
-   Chaque appel echoue silencieusement (cote utilisateur) si le compte est a
-   sec — regarde le journal de l'add-on pour le confirmer (voir plus bas).
-4. Optionnel : `ai_task_entity_id` pour forcer une entite precise si tu en as
-   plusieurs. Laisser vide = detection automatique de la premiere entite
-   `ai_task.*` trouvee.
+   activee, ou toute autre integration compatible AI Task). Sans cela,
+   l'add-on journalise un avertissement explicite et retombe en permanence
+   sur la description locale.
+3. **Cette entite doit disposer d'un credit/quota actif chez son
+   fournisseur.** Chaque appel echoue silencieusement (cote utilisateur) si
+   le compte est a sec — consulter le journal de l'add-on pour le confirmer
+   (voir plus bas).
+4. Optionnel : `ai_task_entity_id` pour forcer une entite precise en
+   presence de plusieurs entites `ai_task.*`. Laisser vide equivaut a une
+   detection automatique de la premiere entite `ai_task.*` trouvee.
 
 ### Comportement
 
@@ -247,9 +262,9 @@ l'entite `ai_task.*` deja configuree dans ton HA.
   par automation + hash de configuration : elle n'est regeneree que si
   l'automation change.
 - Chaque generation envoie les declencheurs/conditions/actions de
-  l'automation (pas de donnees personnelles, mais la logique de tes
-  automations) au fournisseur IA branche sur ton entite `ai_task` — dans le
-  cas d'OpenAI Conversation, a OpenAI.
+  l'automation (pas de donnees personnelles, mais la logique des
+  automations concernees) au fournisseur IA branche sur l'entite
+  `ai_task` configuree — dans le cas d'OpenAI Conversation, a OpenAI.
 - Si l'option est desactivee, le frontend ne fait meme pas la demande : il
   verifie l'etat de la fonctionnalite une fois au chargement (`/healthz`).
 - L'appel au service `ai_task.generate_data` (jusqu'a 45 s) ne bloque pas les
@@ -298,8 +313,9 @@ montre plus que `/states` et un recapitulatif "X depuis cache".
 ## Limites connues
 
 - Au moment de la mise en place de cette fonctionnalite, l'entite
-  `ai_task.openai_ai_task` de cette instance renvoyait une erreur OpenAI
-  ("Insufficient funds / quota exceeded") : verifie la facturation de ton
-  compte OpenAI si les descriptions IA n'apparaissent jamais une fois
-  l'option activee (l'add-on retombe silencieusement sur la description
-  mecanique dans ce cas — le journal de l'add-on montre l'echec exact).
+  `ai_task.openai_ai_task` de l'instance de reference renvoyait une erreur
+  OpenAI ("Insufficient funds / quota exceeded") : verifier la facturation
+  du compte OpenAI concerne si les descriptions IA n'apparaissent jamais
+  une fois l'option activee (l'add-on retombe silencieusement sur la
+  description mecanique dans ce cas — le journal de l'add-on montre l'echec
+  exact).
