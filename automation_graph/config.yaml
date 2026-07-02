@@ -1,5 +1,5 @@
 name: "Automations Graph"
-version: "1.7.3"
+version: "1.7.4"
 slug: "automation_graph"
 description: "Graphe interactif des automations Home Assistant (declencheurs, conditions, actions, liens inter-automations), lu en direct depuis Home Assistant a chaque ouverture."
 url: "https://github.com/ppollet73/HA_AutomationGraphs"

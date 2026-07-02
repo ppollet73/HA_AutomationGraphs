@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.7.4 - Correctif
+- **Zoom in/out enchaine (plusieurs secondes) apres un clic sur un resultat
+  de recherche** : cliquer sur une automation alors que plusieurs noeuds
+  etaient encore selectionnes (resultats d'une recherche precedente)
+  declenchait plusieurs evenements select/unselect en rafale (deselection
+  du groupe precedent, puis selection du noeud clique). Chaque evenement
+  empilait sa propre animation de recadrage (300 ms) dans la file d'attente
+  de Cytoscape ; avec de nombreux noeuds deselectionnes d'un coup, cela se
+  traduisait par plusieurs secondes de zoom in/out enchaines.
+- **Correctif** : toute animation de recadrage en cours ou en attente est
+  desormais annulee avant d'en lancer une nouvelle - seule la derniere
+  selection effective determine le recadrage visible.
+
 ## 1.7.3 - Correctif
 - **Zoom in/out repete pendant une recherche** : la recherche (re)selectionne
   les noeuds correspondants a chaque frappe (debounce 250 ms). Cette
