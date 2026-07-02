@@ -1,0 +1,46 @@
+configuration:
+  device_cache_minutes:
+    name: "Registry cache (minutes)"
+    description: >-
+      How long device names and automation categories (read from the Home
+      Assistant registry over WebSocket) are cached. Increase this if your
+      devices/categories rarely change, decrease it to see changes sooner.
+  config_cache_minutes:
+    name: "Automation config cache (minutes)"
+    description: >-
+      How long automation configurations (triggers, conditions, actions),
+      read from the Home Assistant core API, are cached in memory. During
+      this time, opening the page only re-reads the list of automations and
+      their state (always up to date), not their full configuration: this
+      avoids one Home Assistant API call per automation on every page load.
+      A change made to an automation in Home Assistant shows up after at
+      most this delay, or immediately via the "Recalculer (live)" button,
+      which forces a full reload.
+  enable_ai_descriptions:
+    name: "AI descriptions"
+    description: >-
+      Enables natural-language automation descriptions via Home Assistant's
+      native ai_task.generate_data service. Disabled by default: with it
+      off, nothing ever leaves your network for this feature. REQUIRED for
+      this to do anything: (1) an ai_task.* entity must already exist in
+      Home Assistant (e.g. the "OpenAI Conversation" integration with AI
+      Task enabled, or any other AI Task-compatible integration); (2) that
+      entity must be functional, with sufficient credit/quota with its
+      provider. If these conditions aren't met, the add-on silently falls
+      back to a local description (check the add-on log to see why).
+  ai_task_entity_id:
+    name: "ai_task entity to use"
+    description: >-
+      Optional. Entity ID of the ai_task entity to use for AI descriptions
+      (e.g. ai_task.openai_ai_task). Leave empty to auto-detect the first
+      ai_task.* entity found in Home Assistant. Has no effect if "AI
+      descriptions" is disabled.
+  log_level:
+    name: "Log level"
+    description: >-
+      Level of messages shown in the add-on's Log tab: debug, info (default),
+      warning or error. "info" keeps the current behavior (every request,
+      every Home Assistant call, every AI description generation is logged).
+      "warning" or "error" hide these tracking lines and only keep warnings
+      and errors (e.g. failed HA call, AI quota exceeded). This does not
+      change what the add-on does, only what's visible in the log.
